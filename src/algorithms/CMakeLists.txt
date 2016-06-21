@@ -1,5 +1,4 @@
 cmake_minimum_required (VERSION 2.6)
-cmake_policy(SET CMP0003 NEW)
 
 # Add quaternion library to the library list
 set (QUATERNION_LIBS "quaternion" ${QUATERNION_LIBS})
@@ -10,16 +9,18 @@ set (QUATERNION_LIBS "quaternion" ${QUATERNION_LIBS})
 include_directories ("${PROJECT_BINARY_DIR}/src/base")
 include_directories ("${PROJECT_SOURCE_DIR}/src/base")
 
+# Define the project files in this folder which we want to include
+# in this build. We can have many versions of this for different 
+# executables
 set (QUATERNION_SOURCES
 	main.cpp
 )
 
-# Create the executable
+# Add the executable
 add_executable(rotations ${QUATERNION_SOURCES})
 
 # Link all QUATERNION_LIBS to the executable
 target_link_libraries(rotations "${QUATERNION_LIBS}")
 
-# Define install paths
-install(FILES ${QUATERNION_HEADERS} DESTINATION include/quaternion)
+# Configure install settings (puts "rotations" in "bin")
 install(TARGETS rotations DESTINATION bin)
