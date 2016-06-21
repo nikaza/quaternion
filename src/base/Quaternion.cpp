@@ -1,7 +1,8 @@
 #include "Quaternion.h"
-#include <vector>
 #include <cassert>
 
+// Define our namespace. This conveniently allows us to use all our
+// definitions without the Quaternions:: prefix
 using namespace Quaternions;
 
 // Default constructor: create zero quaternion
@@ -26,10 +27,12 @@ Quaternion::Quaternion(double w, double i, double j, double k)
 	if (i!=0){elements_[qi]=i;}
 	if (j!=0){elements_[qj]=j;}
 	if (k!=0){elements_[qk]=k;}
-		  
 }
 
-// Default destructor
+// Default destructor. All data in an object is stored in its private members
+// so when the object is destroyed we must deallocate that memory.
+// An exception is when using shared pointers, where the destructor will simply
+// decrease the reference count by 1.
 Quaternion::~Quaternion()
 {
 	elements_.clear();
@@ -61,7 +64,6 @@ void Quaternion::operator=(Quaternion &&q)
 
 void Quaternion::write(std::ostream &out)
 {
-	int counter=0;
 	for (auto &element : elements_ ){
 //		cout<<element.second<<endl;
 		if (element.second != 0.0 ){
@@ -85,7 +87,6 @@ void Quaternion::write(std::ostream &out)
 			break;
 			// No default handled
 		}
-		++counter;
 	}
 	cout<<std::noshowpos; // Reset the showpos format
 }
@@ -102,7 +103,7 @@ double Quaternion::norm() const
 	return norm;
 }
 
-bool Quaternion::isEmpty()
+bool Quaternion::isEmpty() const
 {
 	if (elements_.empty()){
 		return true;
@@ -114,10 +115,10 @@ bool Quaternion::isEmpty()
 QuaternionPtr Quaternions::operator+(const QuaternionPtr q1, const QuaternionPtr q2)
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion(
-			q1->getAxis(qw)+q2->getAxis(qw),
-			q1->getAxis(qi)+q2->getAxis(qi),
-			q1->getAxis(qj)+q2->getAxis(qj),
-			q1->getAxis(qk)+q2->getAxis(qk) );
+			q1->getAxisValue(qw)+q2->getAxisValue(qw),
+			q1->getAxisValue(qi)+q2->getAxisValue(qi),
+			q1->getAxisValue(qj)+q2->getAxisValue(qj),
+			q1->getAxisValue(qk)+q2->getAxisValue(qk) );
 
 	return q;
 }
@@ -129,10 +130,10 @@ Quaternion &Quaternions::operator+(Quaternion &q1, Quaternion &q2)
 		assert(!"Addition of two uninitialized quaternions");
 	}
 	Quaternion q = Quaternion(
-			q1.getAxis(qw)+q2.getAxis(qw),
-			q1.getAxis(qi)+q2.getAxis(qi),
-			q1.getAxis(qj)+q2.getAxis(qj),
-			q1.getAxis(qk)+q2.getAxis(qk) );
+			q1.getAxisValue(qw)+q2.getAxisValue(qw),
+			q1.getAxisValue(qi)+q2.getAxisValue(qi),
+			q1.getAxisValue(qj)+q2.getAxisValue(qj),
+			q1.getAxisValue(qk)+q2.getAxisValue(qk) );
 
 	return q;
 }
@@ -140,10 +141,10 @@ Quaternion &Quaternions::operator+(Quaternion &q1, Quaternion &q2)
 QuaternionPtr Quaternions::operator-(const QuaternionPtr q1, const QuaternionPtr q2)
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion(
-			q1->getAxis(qw)-q2->getAxis(qw),
-			q1->getAxis(qi)-q2->getAxis(qi),
-			q1->getAxis(qj)-q2->getAxis(qj),
-			q1->getAxis(qk)-q2->getAxis(qk) );
+			q1->getAxisValue(qw)-q2->getAxisValue(qw),
+			q1->getAxisValue(qi)-q2->getAxisValue(qi),
+			q1->getAxisValue(qj)-q2->getAxisValue(qj),
+			q1->getAxisValue(qk)-q2->getAxisValue(qk) );
 	return q;
 }
 
