@@ -3,6 +3,7 @@ This is a demo library to enable Quaternion calculations in C++. It is by no mea
 
 * To demonstrate a simple way to build a project using CMAKE with commented and easy to read cmakefiles
 * To demonstrate implementation of C++11 move semantics
+* To demonstrate some basic programming principles
 * To implement a fast and robust quaternion library
 
 The quaternions are built as sparse vectors using std::map, which is well suited to this task because of its automatic sparsity and its O(log(n)) lookup time.
