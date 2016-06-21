@@ -30,6 +30,12 @@ do
 	esac
 done
 
+# Enable parallel compilation in the Linux environment
+if [[ ${CPUS} -gt 1 ]]; then
+  echo -- Compiling with $CPUS cores
+  export MAKEFLAGS="${MAKEFLAGS}" -j ${CPUS}
+fi
+
 # Delete all previous build and install folders
 if [[ "$resetBuild" == "true" ]]; then
 	rm -rf build install
