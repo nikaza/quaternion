@@ -1,0 +1,12 @@
+# Ignore directories
+build/
+install/
+
+# Eclipse project files
+src/.settings
+src/.cproject
+src/.project
+
+# Temporary files
+*.swp
+*.*~
