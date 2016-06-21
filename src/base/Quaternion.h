@@ -50,24 +50,36 @@ typedef enum{
 class Quaternion;
 typedef shared_ptr<Quaternion> QuaternionPtr;
 
+// You might be tempted to make these const, but remember! Non-member functions
+// cannot be const!
+// == Pointer versions
 // - Addition and subtraction
-//   == Pointer versions
-QuaternionPtr operator+(const QuaternionPtr q1, const QuaternionPtr q2);
+QuaternionPtr operator+(const QuaternionPtr q1, const QuaternionPtr q2);  
 QuaternionPtr operator-(const QuaternionPtr q1, const QuaternionPtr q2);
-
-//   == Object versions
-Quaternion &operator+(Quaternion &q1, Quaternion &q2);  // std::map[] can't be const
-Quaternion operator-(Quaternion &q1, Quaternion &q2);
 
 // - Multiplication
 //   == Scalar multiplications
-QuaternionPtr operator*(const double c, const QuaternionPtr q2);
-QuaternionPtr operator*(const int c, const QuaternionPtr q2); // int will be casted to double
-
+/* Note how we DO NOT pass primitives (double, int) by reference. This is because:
+ *  - primitives are blitable, so the cost of the copy depends on the size
+ *  - primitives are small, only double and long long are bigger than a reference in most environments
+ *  - pass-by-value avoids aliasing, allowing the optimizer to really do its thing
+ */ 
+QuaternionPtr operator*(const double c, const QuaternionPtr &q2);
+QuaternionPtr operator*(const int c, const QuaternionPtr &q2); // int will be casted to double
+QuaternionPtr operator*(const QuaternionPtr &q2,const double c);
+QuaternionPtr operator*(const QuaternionPtr q2, const int c); // int will be casted to double
 //   ==Quaternion multiplication
-//     -- Pointer version
-QuaternionPtr operator*(const QuaternionPtr q1, const QuaternionPtr q2);
-//     -- Object version
+QuaternionPtr operator*(const QuaternionPtr &q1, const QuaternionPtr &q2);
+
+// == Object versions
+// - Addition and subtraction
+Quaternion operator+(Quaternion &q1, Quaternion &q2);  // std::map[] can't be const
+Quaternion operator-(Quaternion &q1, Quaternion &q2);
+// - Multiplication
+//   == Scalar multiplications
+Quaternion operator*(const double c, Quaternion &q2);
+Quaternion operator*(const int c, Quaternion &q2);
+//   ==Quaternion multiplication
 Quaternion operator*(Quaternion &q1, Quaternion &q2);
 
 /**
@@ -160,7 +172,8 @@ public :
 
 	// Get individual values. Note: to return a reference use operator[]
 	/* Note: even though these are not const, direct assignment is illegal
-	* because you are retrieving a copy of the value. */
+	* because you are retrieving a copy of the value. 
+	*/
 	double w(){return elements_[qw];}
 	double i(){return elements_[qi];}
 	double j(){return elements_[qj];}
@@ -168,7 +181,7 @@ public :
 
 	/* Return the norm |q| = sqrt(\sum a_i^2)*/
 	/* Note: Notice that this function is flagged as const. This means that
-	 * it is forbidden to modify any private member.
+	 * it is forbidden to modify any private member, such as elements
 	 * Also note that we don't return a reference. This is because in C++11
 	 * a move operation will be used automatically for all STL objects.
 	 * CAUTION: If the return object is of custom type, the programmer needs

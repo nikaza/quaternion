@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 cmake_policy(SET CMP0003 NEW)
 
-# Add quaternion to the library list
+# Add quaternion library to the library list
 set (QUATERNION_LIBS "quaternion" ${QUATERNION_LIBS})
 
 # add the subfolders to the search path for include files
@@ -14,11 +14,12 @@ set (QUATERNION_SOURCES
 	main.cpp
 )
 
+# Create the executable
 add_executable(rotations ${QUATERNION_SOURCES})
 
-# Link all libs to the executable
+# Link all QUATERNION_LIBS to the executable
 target_link_libraries(rotations "${QUATERNION_LIBS}")
 
-
+# Define install paths
 install(FILES ${QUATERNION_HEADERS} DESTINATION include/quaternion)
 install(TARGETS rotations DESTINATION bin)

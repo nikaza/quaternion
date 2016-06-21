@@ -14,7 +14,7 @@
 // definitions without the Quaternions:: prefix
 using namespace Quaternions;
 
-// Default constructor: create zero quaternion
+// Default constructor: create zero (nonempty!) quaternion
 Quaternion::Quaternion()
 {
 	// Assign quaternion values
@@ -47,6 +47,7 @@ Quaternion::~Quaternion()
 	elements_.clear();
 }
 
+// ===Begin member operator overloading===
 // Copy constructor
 Quaternion::Quaternion(const Quaternion &q)
 {
@@ -70,35 +71,7 @@ void Quaternion::operator=(Quaternion &&q)
 	}
 
 }
-
-void Quaternion::write(std::ostream &out)
-{
-	for (auto &element : elements_ ){
-//		cout<<element.second<<endl;
-		if (element.second != 0.0 ){
-			cout<<std::showpos<<element.second; // Show the +/- sign if non-zero
-		}else{
-			cout<<element.second;
-		}
-		switch (element.first){ // Print the unit vector
-		case qw:
-			break;
-		case qi:
-			cout<<"i";
-			break;
-		case qj:
-			cout<<"j";
-			break;
-		case qk:
-			cout<<"k";
-			break;
-		default:
-			break;
-			// No default handled
-		}
-	}
-	cout<<std::noshowpos; // Reset the showpos format
-}
+// ====End member operator overloading====
 
 double Quaternion::norm() const
 {
@@ -120,7 +93,38 @@ bool Quaternion::isEmpty() const
 		return false;
 	}
 }
-// QuaternionPtr addition
+
+void Quaternion::write(std::ostream &out)
+{
+	for (auto &element : elements_ ){
+		if (element.second != 0.0 ){
+			cout<<std::showpos<<element.second; // Show the +/- sign if non-zero
+		}else{
+			cout<<element.second;
+		}
+		switch (element.first){ // Print the unit vector
+		case qw:
+			break;
+		case qi:
+			cout<<"i";
+			break;
+		case qj:
+			cout<<"j";
+			break;
+		case qk:
+			cout<<"k";
+			break;
+		default:
+			// No default behaviour specified, break
+			break;
+		}
+	}
+	cout<<std::noshowpos; // Reset the showpos format
+}
+
+// ==== Begin non-member operator overloading ===
+// shared_ptr versions
+// - QuaternionPtr addition
 QuaternionPtr Quaternions::operator+(const QuaternionPtr q1, const QuaternionPtr q2)
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion(
@@ -132,21 +136,7 @@ QuaternionPtr Quaternions::operator+(const QuaternionPtr q1, const QuaternionPtr
 	return q;
 }
 
-// Quaternion addition
-Quaternion &Quaternions::operator+(Quaternion &q1, Quaternion &q2)
-{
-	if (q1.isEmpty() && q2.isEmpty() ){
-		assert(!"Addition of two uninitialized quaternions");
-	}
-	Quaternion q = Quaternion(
-			q1.getAxisValue(qw)+q2.getAxisValue(qw),
-			q1.getAxisValue(qi)+q2.getAxisValue(qi),
-			q1.getAxisValue(qj)+q2.getAxisValue(qj),
-			q1.getAxisValue(qk)+q2.getAxisValue(qk) );
-
-	return q;
-}
-
+// - QuaternionPtr subtraction
 QuaternionPtr Quaternions::operator-(const QuaternionPtr q1, const QuaternionPtr q2)
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion(
@@ -157,7 +147,9 @@ QuaternionPtr Quaternions::operator-(const QuaternionPtr q1, const QuaternionPtr
 	return q;
 }
 
-QuaternionPtr Quaternions::operator*(const double c, const QuaternionPtr q2)
+// - Multiplications
+//   == Scalar multiplication
+QuaternionPtr Quaternions::operator*(const double c, const QuaternionPtr &q2) // double
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion();
 	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // Compiler should unroll this loop
@@ -166,7 +158,7 @@ QuaternionPtr Quaternions::operator*(const double c, const QuaternionPtr q2)
 	return q;
 }
 //
-QuaternionPtr Quaternions::operator*(const int c, const QuaternionPtr q2)
+QuaternionPtr Quaternions::operator*(const int c, const QuaternionPtr &q2) // int
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion();
 	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // Compiler should unroll this loop
@@ -175,7 +167,8 @@ QuaternionPtr Quaternions::operator*(const int c, const QuaternionPtr q2)
 	return q;
 }
 
-QuaternionPtr Quaternions::operator*(const QuaternionPtr q1, const QuaternionPtr q2)
+//   == Quaternion multiplication
+QuaternionPtr Quaternions::operator*(const QuaternionPtr &q1, const QuaternionPtr &q2)
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion();
 
@@ -207,6 +200,21 @@ QuaternionPtr Quaternions::operator*(const QuaternionPtr q1, const QuaternionPtr
 	return q;
 }
 
+// Object operator overloading
+// - Quaternion addition
+Quaternion Quaternions::operator+(Quaternion &q1, Quaternion &q2)
+{
+	if (q1.isEmpty() && q2.isEmpty() ){
+		assert(!"Addition of two uninitialized quaternions");
+	}
+	Quaternion q = Quaternion(
+			q1.getAxisValue(qw)+q2.getAxisValue(qw),
+			q1.getAxisValue(qi)+q2.getAxisValue(qi),
+			q1.getAxisValue(qj)+q2.getAxisValue(qj),
+			q1.getAxisValue(qk)+q2.getAxisValue(qk) );
+
+	return q;
+}
 // Quanternion multiplication
 Quaternion Quaternions::operator*(Quaternion &q1, Quaternion &q2)
 {
@@ -238,5 +246,6 @@ Quaternion Quaternions::operator*(Quaternion &q1, Quaternion &q2)
 //	q.write(cout);cout<<endl;
 	return q;
 }
+// ======End non-member operator overloading======
 
 

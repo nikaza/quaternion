@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.4) # Define minimum CMake version
+cmake_minimum_required (VERSION 2.6) # Define minimum CMake version
 cmake_policy(SET CMP0003 NEW) 		 # Set CMake policy
 project (Quaternion CXX) 			 # Also sets variables such as PROJECT_BINARY_DIR
 
