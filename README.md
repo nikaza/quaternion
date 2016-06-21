@@ -15,9 +15,9 @@ You will need:
 * CMAKE 3.4 or greater
 * clang 3.8 or greater, or gcc 4.9 or greater
 
-Run the build_script.sh -t <yourCompiler> -j <nuCores>
+Run the build_script.sh -t *yourCompiler* -j *nuCores*
 
-, where <yourCompiler> can be llvm or gcc
+, where *yourCompiler* can be llvm or gcc
 
 -- How to use
 
