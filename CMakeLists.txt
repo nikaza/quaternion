@@ -1,12 +1,12 @@
 cmake_minimum_required (VERSION 2.6) # Define minimum CMake version
 cmake_policy(SET CMP0003 NEW) 		 # Set CMake policy
-project (Quaternion CXX) 			 # Also sets variables such as PROJECT_BINARY_DIR
+project (Quaternion CXX) 			 # Also sets variables such as PROJECT_BINARY_DIR and PROJECT_SOURCE_DIR
 
 # Set version number
 set (Quaternion_VERSION_MAJOR 1)
 set (Quaternion_VERSION_MINOR 0)
 
-# Get OS information
+# Get OS information. The project currently only builds on Linux
 if (CMAKE_SYSTEM_NAME MATCHES "Windows")
 	message(FATAL_ERROR "Project requires Linux OS")
 endif()
@@ -17,6 +17,8 @@ endif()
 # Option to build shared or static libraries
 # ==========================================
 OPTION(BUILD_SHARED_LIBS "Build Quaternion with shared libraries." ON)
+# On Unix systems, dynamic libraries are searched for in a system-defined 
+# list of directories, so we need to set the shared lib install rpath
 if (${BUILD_SHARED_LIBS})
      set(CMAKE_INSTALL_RPATH 
         ${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib)
@@ -29,7 +31,8 @@ set (QUATERNION_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH
 set(CMAKE_INSTALL_PREFIX ${QUATERNION_INSTALL_PREFIX} CACHE INTERNAL 
     "Install path prefix, prepended onto install directories.")
 
-# Set C++ flags depending on compiler
+# Set C++ flags depending on compiler, and detect compiler versions
+# Currently only supports CLang and gcc
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   message("-- Using g++ compiler")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
@@ -44,13 +47,12 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set (CMAKE_CXX_FLAGS "-O3 -std=c++14 -fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
 endif ()
 
-
 # add the binary tree to the search path for include files
 include_directories("${PROJECT_BINARY_DIR}")
 
-# Add source directories
+# Add source directories and subdirectories
 include_directories ("${PROJECT_SOURCE_DIR}/src")
 add_subdirectory (src/base)
 add_subdirectory (src/algorithms)
 
-#include_directories ("${PROJECT_SOURCE_DIR}/src/base")
+# End of file

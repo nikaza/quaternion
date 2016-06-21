@@ -160,7 +160,6 @@ public :
 	double &operator[](AxisType axis){return elements_[axis];}
 	// =========Done overloading operators========
 	
-
 	/* Get the conjugate of this quaternion */
 	Quaternion conjugate();
 	
@@ -184,7 +183,7 @@ public :
 	/* Note: this function has a default argument, as denoted by the "="
 	 * assignment. If not argument is provided, it will use cout by default
 	 */
-	void write(std::ostream &out=cout);
+	void write(std::ostream &out=cout) const;
 
 	// Get individual values. Note: to return a reference use operator[]
 	/* Note: even though these are not const, direct assignment is illegal
@@ -211,8 +210,8 @@ private:
 	// Elements container. Use map for sparse storage and O(log(n)) lookup complexity
 	std::map<AxisType,double> elements_;
 
-};
+}; // End of quaternion class
 
-}
+} // End namespace Quaternions
 
 #endif
