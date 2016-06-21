@@ -6,6 +6,23 @@ project (Quaternion CXX) 			 # Also sets variables such as PROJECT_BINARY_DIR
 set (Quaternion_VERSION_MAJOR 1)
 set (Quaternion_VERSION_MINOR 0)
 
+# Get OS information
+if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+	message(FATAL_ERROR "Project requires Linux OS")
+endif()
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+	message("-- Detected Linux OS, proceeding with build")
+endif()
+
+# Option to build shared or static libraries
+# ==========================================
+OPTION(BUILD_SHARED_LIBS "Build Quaternion with shared libraries." ON)
+if (${BUILD_SHARED_LIBS})
+     set(CMAKE_INSTALL_RPATH 
+        ${CMAKE_INSTALL_RPATH}:${CMAKE_INSTALL_PREFIX}/lib)
+endif()
+# ==========================================
+
 # Don't install in /usr/local/
 set (QUATERNION_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH 
     "Dir. where Quaternion will be installed. Defaults to current dir.")
@@ -15,11 +32,18 @@ set(CMAKE_INSTALL_PREFIX ${QUATERNION_INSTALL_PREFIX} CACHE INTERNAL
 # Set C++ flags depending on compiler
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   message("-- Using g++ compiler")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
+    message(FATAL_ERROR "Project requires gcc>=4.9")
+  endif()
   set (CMAKE_CXX_FLAGS "-O3 -std=c++14 -fopenmp ${CMAKE_CXX_FLAGS}")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")  
   message("-- Using CLang compiler")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.8")
+    message(FATAL_ERROR "Project requires clang>=3.8")
+  endif()
   set (CMAKE_CXX_FLAGS "-O3 -std=c++14 -fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
 endif ()
+
 
 # add the binary tree to the search path for include files
 include_directories("${PROJECT_BINARY_DIR}")

@@ -52,7 +52,7 @@ typedef shared_ptr<Quaternion> QuaternionPtr;
 
 // You might be tempted to make these const, but remember! Non-member functions
 // cannot be const!
-// == Pointer versions
+// === Pointer versions ===
 // - Addition and subtraction
 QuaternionPtr operator+(const QuaternionPtr q1, const QuaternionPtr q2);  
 QuaternionPtr operator-(const QuaternionPtr q1, const QuaternionPtr q2);
@@ -66,19 +66,27 @@ QuaternionPtr operator-(const QuaternionPtr q1, const QuaternionPtr q2);
  */ 
 QuaternionPtr operator*(const double c, const QuaternionPtr &q2);
 QuaternionPtr operator*(const int c, const QuaternionPtr &q2); // int will be casted to double
-QuaternionPtr operator*(const QuaternionPtr &q2,const double c);
-QuaternionPtr operator*(const QuaternionPtr q2, const int c); // int will be casted to double
+QuaternionPtr operator*(const QuaternionPtr &q2, const double c);
+QuaternionPtr operator*(const QuaternionPtr &q2, const int c); // int will be casted to double
+
 //   ==Quaternion multiplication
+/* We use the formula for the Hamilton product:
+ * https://en.wikipedia.org/wiki/Quaternion#Hamilton_product */
 QuaternionPtr operator*(const QuaternionPtr &q1, const QuaternionPtr &q2);
 
-// == Object versions
+// === Object versions ===
 // - Addition and subtraction
 Quaternion operator+(Quaternion &q1, Quaternion &q2);  // std::map[] can't be const
 Quaternion operator-(Quaternion &q1, Quaternion &q2);
 // - Multiplication
 //   == Scalar multiplications
+/* Note that we forego passing the quaternions as const so that we
+ * can take advantage of r-value semantics
+ */
 Quaternion operator*(const double c, Quaternion &q2);
 Quaternion operator*(const int c, Quaternion &q2);
+Quaternion operator*(Quaternion &q2, const double c);
+Quaternion operator*(Quaternion &q2, const int c);
 //   ==Quaternion multiplication
 Quaternion operator*(Quaternion &q1, Quaternion &q2);
 
@@ -92,7 +100,7 @@ Quaternion operator*(Quaternion &q1, Quaternion &q2);
  * and supports move semantics for efficient calculations.
  * 
  * The quaternion elements are stored in an std::map container to support
- * sparsity and logarithmic lookup complexity.
+ * sparsity and logarithmic lookup complexity (although it's only 4 elements anyway)
  * 
  * The class implements operations with shared pointers to quaternions
  * as well as regular operations, for increased functionality.
@@ -123,7 +131,7 @@ public :
 	// Copy constructor
 	Quaternion(const Quaternion &q);
 
-	// ====Overload member operators===
+	// ==========Overload member operators=========
 	/* TRIVIA: The binary operators = (assignment), [] (array subscription),
 	 * -> (member access), as well as the n-ary () (function call) operator,
 	 * must always be implemented as member functions, because the syntax of
@@ -134,7 +142,11 @@ public :
 	 * assignment operator is deleted, so we have to explicitly define it if
 	 * we wish to maintain the functionality.
 	 */
-	void operator=(Quaternion &q);
+	/* Note how these functions are not marked as inline.
+	 * This is because the compiler is smart enough (in most cases) to decide 
+	 * on its own what should be inlined when we turn on optimizations
+	 */
+	void operator=(Quaternion &q); // FIXME: Consider different design, as this doesn't allow reference chaining, i.e., q1=q2=q3
 
 	// Move assignment operator. Activates in instances such as q1=q2*q3
 	/* Note: the operator overloading for q2*q3 returns a regular l-value.
@@ -146,8 +158,12 @@ public :
 
 	// Overload operator to get and assign individual values
 	double &operator[](AxisType axis){return elements_[axis];}
-	// ===Done overloading operators===
+	// =========Done overloading operators========
+	
 
+	/* Get the conjugate of this quaternion */
+	Quaternion conjugate();
+	
 	// Get element iterators
 	/* Note: can't be const because the return value is an std::map
 	 * element

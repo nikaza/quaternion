@@ -52,6 +52,9 @@ int main()
 	cout<<"Using copy constructor with move assignment operator for qt3=qt2*qt1  :  qt3 = ";
 	Quaternion qt3=Quaternion(qt2*qt1);
 	qt3.write(cout);
+	Quaternion qt4=qt3.conjugate();
+	cout<<"\n\nConjugate : "<<endl<<endl;;
+	qt4.write(cout);
 
 	cout<<endl<<endl;
 

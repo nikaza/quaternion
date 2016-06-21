@@ -17,6 +17,7 @@ using namespace Quaternions;
 // Default constructor: create zero (nonempty!) quaternion
 Quaternion::Quaternion()
 {
+	// TODO: See about creating a sparse quaternion instead
 	// Assign quaternion values
 	// - Real part
 	elements_[qw]=0;
@@ -72,6 +73,12 @@ void Quaternion::operator=(Quaternion &&q)
 
 }
 // ====End member operator overloading====
+
+Quaternion Quaternion::conjugate()
+{
+	Quaternion q = Quaternion(w(),-i(),-j(),-k());
+	return q;
+}
 
 double Quaternion::norm() const
 {
@@ -152,23 +159,41 @@ QuaternionPtr Quaternions::operator-(const QuaternionPtr q1, const QuaternionPtr
 QuaternionPtr Quaternions::operator*(const double c, const QuaternionPtr &q2) // double
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion();
-	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // Compiler should unroll this loop
+	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
 		q->operator[]((*it).first)=c*(*it).second;
 	}
 	return q;
 }
-//
+
 QuaternionPtr Quaternions::operator*(const int c, const QuaternionPtr &q2) // int
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion();
-	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // Compiler should unroll this loop
+	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
+		q->operator[]((*it).first)=(double)(c)*(*it).second;
+	}
+	return q;
+}
+
+QuaternionPtr Quaternions::operator*(const QuaternionPtr &q2, const double c) // double
+{
+	QuaternionPtr q = (QuaternionPtr) new Quaternion();
+	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
+		q->operator[]((*it).first)=c*(*it).second;
+	}
+	return q;
+}
+
+QuaternionPtr Quaternions::operator*(const QuaternionPtr &q2, const int c) // int
+{
+	QuaternionPtr q = (QuaternionPtr) new Quaternion();
+	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
 		q->operator[]((*it).first)=(double)(c)*(*it).second;
 	}
 	return q;
 }
 
 //   == Quaternion multiplication
-QuaternionPtr Quaternions::operator*(const QuaternionPtr &q1, const QuaternionPtr &q2)
+QuaternionPtr Quaternions::operator*(const QuaternionPtr &q1, const QuaternionPtr &q2) // FIXME: See if I can speed this up
 {
 	QuaternionPtr q = (QuaternionPtr) new Quaternion();
 
@@ -205,7 +230,7 @@ QuaternionPtr Quaternions::operator*(const QuaternionPtr &q1, const QuaternionPt
 Quaternion Quaternions::operator+(Quaternion &q1, Quaternion &q2)
 {
 	if (q1.isEmpty() && q2.isEmpty() ){
-		assert(!"Addition of two uninitialized quaternions");
+		assert(!"Addition of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
 	}
 	Quaternion q = Quaternion(
 			q1.getAxisValue(qw)+q2.getAxisValue(qw),
@@ -215,8 +240,60 @@ Quaternion Quaternions::operator+(Quaternion &q1, Quaternion &q2)
 
 	return q;
 }
-// Quanternion multiplication
-Quaternion Quaternions::operator*(Quaternion &q1, Quaternion &q2)
+// Quaternion subtraction
+Quaternion Quaternions::operator-(Quaternion &q1, Quaternion &q2)
+{
+	if (q1.isEmpty() && q2.isEmpty() ){
+		assert(!"Subtraction of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
+	}
+	Quaternion q = Quaternion(
+			q1.getAxisValue(qw)-q2.getAxisValue(qw),
+			q1.getAxisValue(qi)-q2.getAxisValue(qi),
+			q1.getAxisValue(qj)-q2.getAxisValue(qj),
+			q1.getAxisValue(qk)-q2.getAxisValue(qk) );
+
+	return q;
+}
+// - Multiplication
+//   == Scalar multiplication
+Quaternion Quaternions::operator*(const double c, Quaternion &q2) // double
+{
+	Quaternion q = Quaternion();
+	for (auto &&it=q2.elementsBegin();it!=q2.elementsEnd();++it){ // FIXME: Help compiler unroll this loop
+		q[(*it).first]=c*(*it).second;
+	}
+	return q;
+}
+
+Quaternion Quaternions::operator*(const int c, Quaternion &q2) // int
+{
+	Quaternion q = Quaternion();
+	for (auto &&it=q2.elementsBegin();it!=q2.elementsEnd();++it){ // FIXME: Help compiler unroll this loop
+		q[(*it).first]=(double)(c)*(*it).second;
+	}
+	return q;
+}
+
+Quaternion Quaternions::operator*(Quaternion &q2, const double c) // double
+{
+	Quaternion q = Quaternion();
+	for (auto &&it=q2.elementsBegin();it!=q2.elementsEnd();++it){ // FIXME: Help compiler unroll this loop
+		q[(*it).first]=c*(*it).second;
+	}
+	return q;
+}
+
+Quaternion Quaternions::operator*(Quaternion &q2, const int c) // int
+{
+	Quaternion q = Quaternion();
+	for (auto &&it=q2.elementsBegin();it!=q2.elementsEnd();++it){ // FIXME: Help compiler unroll this loop
+		q[(*it).first]=(double)(c)*(*it).second;
+	}
+	return q;
+}
+
+// == Quaternion multiplication
+Quaternion Quaternions::operator*(Quaternion &q1, Quaternion &q2) // FIXME: See if I can speed this up
 {
 	Quaternion q = Quaternion();
 	// Real part
