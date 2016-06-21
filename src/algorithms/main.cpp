@@ -1,17 +1,21 @@
+/* File main.cpp
+ * 
+ * Copyright (c) Nikos Kazazakis 2016
+ * \brief Example of performing quaternion calcluations using the Quaternion class
+ * \author Nikos Kazazakis
+ */
+
 #include <iostream>
 #include "Quaternion.h"
 
-using std::cout;
-using std::cin;
-using std::endl;
-using std::shared_ptr;
 using namespace Quaternions;
 
 typedef shared_ptr<Quaternion> QuaternionPtr;
 
+// Sample program to test the operator overloading. Will implement quaternion
+// rotations in later revision
 int main()
 {
-//	Quaternion q = (QuaternionPtr) new Quaternion(1,2,3,4);
 	QuaternionPtr q = (QuaternionPtr) new Quaternion(0,2,0,4);
 	QuaternionPtr q1 = (QuaternionPtr) new Quaternion(1,5,2,4);
 

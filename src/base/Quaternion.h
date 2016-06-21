@@ -1,4 +1,11 @@
-#ifndef QUATERNION_LIB
+/* File Quaternion.h
+ * 
+ * Copyright (c) Nikos Kazazakis 2016
+ * \brief Define Quaternion class for quaternion arithmetic in C++14
+ * \author Nikos Kazazakis
+ */
+
+#ifndef QUATERNION_LIB // Define macro headers so that this file doesn't get included twice
 #define QUATERNION_LIB
 
 // Include STL headers
@@ -62,6 +69,30 @@ QuaternionPtr operator*(const int c, const QuaternionPtr q2); // int will be cas
 QuaternionPtr operator*(const QuaternionPtr q1, const QuaternionPtr q2);
 //     -- Object version
 Quaternion operator*(Quaternion &q1, Quaternion &q2);
+
+/**
+ * Quaternion is a base class for performing fast Quaternion arithmetic.
+ * A quaternion is a vector with 4 components: q = w + a*i + b*j + c*k,
+ * where w is the "real part" of the quaternion and "a*i + b*j + c*k" is
+ * the "imaginary" or "vector" part.
+ * 
+ * This class uses commutative operator overloading for basic arithmetic operations,
+ * and supports move semantics for efficient calculations.
+ * 
+ * The quaternion elements are stored in an std::map container to support
+ * sparsity and logarithmic lookup complexity.
+ * 
+ * The class implements operations with shared pointers to quaternions
+ * as well as regular operations, for increased functionality.
+ * 
+ * Quaternions are particularly interesting in 3D calculations because they
+ * provide a more efficient representation of 3D rotations, e.g., if we
+ * want to rotate vector p in 3 space, the new vector p' can be acquired
+ * by the operation: p'=qpq^{-1}. Notice how this operation involves less calculations
+ * than a regular rotation matrix rotation.
+ * 
+ * Make sure to report any bugs/design improvements you find! Have fun!
+ */
 
 class Quaternion
 {

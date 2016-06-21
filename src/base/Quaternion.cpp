@@ -1,4 +1,13 @@
-#include "Quaternion.h"
+/* File Quaternion.cpp
+ * 
+ * Copyright (c) Nikos Kazazakis 2016
+ * \brief Implementation of a Quaternion library in C++14
+ */
+/* Include the header file of the class. Note that this carries over 
+ * any includes we made in the header
+ * \author Nikos Kazazakis
+ */
+#include "Quaternion.h" 
 #include <cassert>
 
 // Define our namespace. This conveniently allows us to use all our
