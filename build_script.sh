@@ -5,8 +5,8 @@
 # This script should be at the root folder of the project, i.e.:
 # /build_script.sh
 # /src/
-# /build/
-# /install/
+# /build/   (created automatically)
+# /install/ (created automatically)
 
 set -e # Exit if there is an error
 
