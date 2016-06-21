@@ -24,7 +24,7 @@ Run the build_script.sh -t *yourCompiler* -j *nuCores*
 
 -- How to use
 
-Link the library quaternion.a to your project. Quaternions work through operator overloading, so the interface should be intuitive. An example executable is included under src/algorithms to demonstrate how to use the library.
+The quaternion library can be built as either a shared or a static library. By default it is built as a shared library (configurable in the top level CMakeLists.txt). Link the library quaternion.a or quaternion.so to your project. Quaternions work through commutative operator overloading, so the interface should be intuitive. A very elementary example executable is included under src/algorithms to demonstrate how to use the library.
 
 -- TODO
 * Implement all permutations of arithmetic operations
