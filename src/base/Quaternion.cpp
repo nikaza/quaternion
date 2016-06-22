@@ -326,27 +326,24 @@ Quaternion Quaternions::operator*(Quaternion &q1, Quaternion &q2) // FIXME: See 
 	Quaternion q = Quaternion();
 	// Real part
 	q[qw]=	 q1.w()*q2.w()
-			-q1.i()*q2.i()
-			-q1.j()*q2.j()
-			-q1.k()*q2.k();
+		-q1.i()*q2.i()
+		-q1.j()*q2.j()
+		-q1.k()*q2.k();
 	// i
-	q[qi]=
-			 q1.w()*q2.i()
-			+q1.i()*q2.w()
-			+q1.j()*q2.k()
-			-q1.k()*q2.j();
+	q[qi]=   q1.w()*q2.i()
+		+q1.i()*q2.w()
+		+q1.j()*q2.k()
+		-q1.k()*q2.j();
 	// j
-	q[qj]=
-			 q1.w()*q2.j()
-			-q1.i()*q2.k()
-			+q1.j()*q2.w()
-			+q1.k()*q2.i();
+	q[qj]=   q1.w()*q2.j()
+		-q1.i()*q2.k()
+		+q1.j()*q2.w()
+		+q1.k()*q2.i();
 	// k
-	q[qk]=
-			 q1.w()*q2.k()
-			+q1.i()*q2.j()
-			-q1.j()*q2.i()
-			+q1.k()*q2.w();
+	q[qk]=   q1.w()*q2.k()
+		+q1.i()*q2.j()
+		-q1.j()*q2.i()
+		+q1.k()*q2.w();
 //	cout<<"returning move operation"<<endl;
 	return q;
 }
