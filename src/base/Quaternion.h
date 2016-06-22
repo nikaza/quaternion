@@ -20,6 +20,7 @@
  * names, causing unnecessary potential naming conflicts.
  * Even worse, if someone includes a library using namespace std,
  * it will include all the std names without the user realising.
+ * Ideally, all "using" statements should be placed on the .cpp files
  */
 using std::shared_ptr;
 using std::cout;
