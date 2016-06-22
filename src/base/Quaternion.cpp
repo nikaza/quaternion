@@ -47,7 +47,7 @@ Quaternion::Quaternion(double w, double i, double j, double k)
 Quaternion::~Quaternion()
 {
 	 // Techincally not necessary because it's an STL object, but good practice to 
-	//  get in the habid of destroing the private members
+	//  get in the habid of destroying the private members
 	elements_.clear();
 }
 
