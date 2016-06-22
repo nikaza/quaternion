@@ -5,7 +5,7 @@
  * \author Nikos Kazazakis
  */
 
-#ifndef QUATERNION_LIB // Define macro headers so that this file doesn't get included twice
+#ifndef QUATERNION_LIB // Define macro headers so that this file is only included once
 #define QUATERNION_LIB
 
 // Include STL headers
