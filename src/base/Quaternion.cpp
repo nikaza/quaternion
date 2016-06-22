@@ -44,6 +44,8 @@ Quaternion::Quaternion(double w, double i, double j, double k)
 // so when the object is destroyed we must deallocate that memory.
 // An exception is when using shared pointers, where the destructor will simply
 // decrease the reference count by 1.
+// It is good practice to write code for the destruction of an object here when you 
+// first create it, to avoid memory leaks
 Quaternion::~Quaternion()
 {
 	 // Techincally not necessary because it's an STL object, but good practice to 
