@@ -40,7 +40,7 @@ Quaternion::Quaternion(double w, double i, double j, double k)
 	if (k!=0){elements_[qk]=k;}
 }
 
-// Default destructor. All data in an object is stored in its private members
+// Default destructor. All data in an object is (usually) stored in its private members
 // so when the object is destroyed we must deallocate that memory.
 // An exception is when using shared pointers, where the destructor will simply
 // decrease the reference count by 1.
