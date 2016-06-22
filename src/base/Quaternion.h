@@ -182,7 +182,7 @@ public :
 
 	// Print quaternion
 	/* Note: this function has a default argument, as denoted by the "="
-	 * assignment. If not argument is provided, it will use cout by default
+	 * assignment. If no argument is provided, it will use cout by default
 	 */
 	void write(std::ostream &out=cout) const;
 
