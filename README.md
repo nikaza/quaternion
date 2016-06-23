@@ -16,6 +16,7 @@ This project is built using CMAKE.
 You will need:
 * CMAKE 2.6 or greater
 * clang 3.8 or greater, or gcc 4.9 or greater
+* If using CLang, libiomp5
 * A computer running Linux. This software was tested in Ubuntu 16.04.
 
 Run the build_script.sh -t *yourCompiler* -j *nuCores*
