@@ -196,6 +196,9 @@ public :
 	 * CAUTION: If the return object is of custom type, the programmer needs
 	 * to code the move semantics for this to work, even if the object is in
 	 * an STL container (e.g. vector<Quaternion> giveMeAQuaternion() const)
+	 * Also note: in this case it's actually more efficient to return by value
+	 * because the size of a double is about as large as a reference, but as
+	 * a primitive it's blitable
 	 */
 	double norm()const;
 
