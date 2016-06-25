@@ -182,10 +182,7 @@ public :
 	 */
 	void write(std::ostream &out=cout) const;
 
-	// Get individual values. Note: to return a reference use operator[]
-	/* Note: even though these are not const, direct assignment is illegal
-	* because you are retrieving a copy of the value. 
-	*/
+	// Get individual values.
 	double w()const;
 	double i()const;
 	double j()const;
