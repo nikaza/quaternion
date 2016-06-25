@@ -29,7 +29,8 @@ Run the build_script.sh -t *yourCompiler* -j *nuCores*
 The quaternion library can be built as either a shared or a static library. By default it is built as a shared library (configurable in the top level CMakeLists.txt). Link the library quaternion.a or quaternion.so to your project. Quaternions work through commutative operator overloading, so the interface should be intuitive.
 
 -- TODO
-* Implement fast rotation algorithms using OpenMP (the project is currently built with the -fopenmp flag)
+* Implement fast rotation algorithm using OpenMP (the project is currently built with the -fopenmp flag)
+* Add doxygen documentation
 
 -- Licensing
 
