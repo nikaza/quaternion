@@ -11,7 +11,6 @@
 // Include STL headers
 #include <iostream>
 #include <cmath>
-#include <memory>
 #include <map>
 
 // Define some commonly used std functions for convenience
@@ -22,7 +21,6 @@
  * it will include all the std names without the user realising.
  * Ideally, all "using" statements should be placed on the .cpp files
  */
-using std::shared_ptr;
 using std::cout;
 using std::endl;
 
@@ -47,38 +45,20 @@ typedef enum{
 	qk
 }AxisType;
 
-// Forward-declare the class to define its shared pointer and operators
+// Forward-declare the class to define operators
 class Quaternion;
-typedef shared_ptr<Quaternion> QuaternionPtr;
-
-// You might be tempted to make these const, but remember! Non-member functions
-// cannot be const!
-// === Pointer versions ===
-// - Addition and subtraction
-QuaternionPtr operator+(const QuaternionPtr q1, const QuaternionPtr q2);  
-QuaternionPtr operator-(const QuaternionPtr q1, const QuaternionPtr q2);
-
-// - Multiplication
-//   == Scalar multiplications
-/* Note how we DO NOT pass primitives (double, int) by reference. This is because:
- *  - primitives are blitable, so the cost of the copy depends on the size
- *  - primitives are small, only double and long long are bigger than a reference in most environments
- *  - pass-by-value avoids aliasing, allowing the optimizer to really do its thing
- */ 
-QuaternionPtr operator*(const double c, const QuaternionPtr &q2);
-QuaternionPtr operator*(const int c, const QuaternionPtr &q2); // int will be casted to double
-QuaternionPtr operator*(const QuaternionPtr &q2, const double c);
-QuaternionPtr operator*(const QuaternionPtr &q2, const int c); // int will be casted to double
-
-//   ==Quaternion multiplication
-/* We use the formula for the Hamilton product:
- * https://en.wikipedia.org/wiki/Quaternion#Hamilton_product */
-QuaternionPtr operator*(const QuaternionPtr &q1, const QuaternionPtr &q2);
 
 // === Object versions ===
 // - Addition and subtraction
-Quaternion operator+(Quaternion &q1, Quaternion &q2);  // std::map[] can't be const
-Quaternion operator-(Quaternion &q1, Quaternion &q2);
+Quaternion operator+(const Quaternion &q1, const Quaternion &q2);  // std::map[] can't be const, however map.at is!
+Quaternion operator-(const Quaternion &q1, const Quaternion &q2);
+
+Quaternion operator+(const double c, const Quaternion &q2);
+Quaternion operator+(const Quaternion &q2,const double c);
+
+Quaternion operator-(const double c, const Quaternion &q2);
+Quaternion operator-(const Quaternion &q2, const double c);
+
 // - Multiplication
 //   == Scalar multiplications
 /* Note that we forego passing the quaternions as const so that we
@@ -88,8 +68,24 @@ Quaternion operator*(const double c, Quaternion &q2);
 Quaternion operator*(const int c, Quaternion &q2);
 Quaternion operator*(Quaternion &q2, const double c);
 Quaternion operator*(Quaternion &q2, const int c);
-//   ==Quaternion multiplication
-Quaternion operator*(Quaternion &q1, Quaternion &q2);
+
+//   == Quaternion-quaternion multiplication
+/* We use the formula for the Hamilton product:
+ * https://en.wikipedia.org/wiki/Quaternion#Hamilton_product */
+/* Note: Using const here is important! It allows us to chain
+ *       multiplications, i.e., q1*q2*q3*q4. This is only possible
+ *       if the 2nd argument is a CONST reference. For instance,
+ *       q3*q4 returns a temporary object. This cannot bind to the
+ *       second argument of the operator for the calculation
+ *       q2*(q3*q4) unless it's const (otherwise it will be destroyed
+ *       and we will assign a value that's about to disappear!)
+ */
+Quaternion operator*(const Quaternion &q1, const Quaternion &q2);
+
+// Comparison operators
+bool operator==(const Quaternion &q1, const Quaternion &q2);
+bool operator!=(const Quaternion &q1, const Quaternion &q2);
+
 
 /**
  * Quaternion is a base class for performing fast Quaternion arithmetic.
@@ -190,10 +186,10 @@ public :
 	/* Note: even though these are not const, direct assignment is illegal
 	* because you are retrieving a copy of the value. 
 	*/
-	double w(){return elements_[qw];}
-	double i(){return elements_[qi];}
-	double j(){return elements_[qj];}
-	double k(){return elements_[qk];}
+	double w()const;
+	double i()const;
+	double j()const;
+	double k()const;
 
 	/* Return the norm |q| = sqrt(\sum a_i^2)*/
 	/* Note: Notice that this function is flagged as const. This means that

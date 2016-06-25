@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.6) # Define minimum CMake version
-cmake_policy(SET CMP0003 NEW)        # Set CMake policy
+cmake_policy(SET CMP0012 NEW)        # Set CMake policy
 project (Quaternion CXX)             # Also sets variables such as PROJECT_BINARY_DIR and PROJECT_SOURCE_DIR
 
 # Set version number
@@ -16,7 +16,7 @@ endif()
 
 # Option to build shared or static libraries
 # ==========================================
-OPTION(BUILD_SHARED_LIBS "Build Quaternion with shared libraries." ON)
+OPTION(BUILD_SHARED_LIBS "Build Quaternion with shared libraries." OFF)
 # On Unix systems, dynamic libraries are searched for in a system-defined 
 # list of directories, so we need to set the shared lib install rpath
 if (${BUILD_SHARED_LIBS})
@@ -38,14 +38,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9")
     message(FATAL_ERROR "Project requires gcc>=4.9")
   endif()
-  set (CMAKE_CXX_FLAGS "-O3 -std=c++14 -fopenmp ${CMAKE_CXX_FLAGS}")
+  set (CMAKE_CXX_FLAGS "-g -O0 -std=c++14 -fopenmp ${CMAKE_CXX_FLAGS}")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")  
   message("-- Using CLang compiler")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.7")
     message(FATAL_ERROR "Project requires clang>=3.7")
   endif()
-    #message(FATAL_ERROR "Project currently only builds with gcc due to cppunit not linking properly with CLang")
-  set (CMAKE_CXX_FLAGS "-stdlib=libstdc++ -O3 -std=c++14  -fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
+  set (CMAKE_CXX_FLAGS "-g -O0 -std=c++14  -fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
 endif ()
 
 # add the binary tree to the search path for include files

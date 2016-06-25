@@ -87,6 +87,7 @@ void Quaternion::operator=(Quaternion &&q)
 		elements_[element.first]=element.second;                 
 	}  
 }
+
 // ====End member operator overloading====
 
 // Return the conjugate of this quaternion. C++11 moves the q stack variable to
@@ -152,136 +153,128 @@ void Quaternion::write(std::ostream &out) const
 	cout<<std::noshowpos; // Reset the showpos format
 }
 
+double Quaternion::w() const
+{
+	if ( elements_.find(qw) == elements_.end() ) {
+		return 0.0;
+	} else {
+		return elements_.at(qw);
+	}
+}
+
+double Quaternion::i() const
+{
+	if ( elements_.find(qi) == elements_.end() ) {
+		return 0.0;
+	} else {
+		return elements_.at(qi);
+	}
+}
+
+double Quaternion::j() const
+{
+	if ( elements_.find(qj) == elements_.end() ) {
+		return 0.0;
+	} else {
+		return elements_.at(qj);
+	}
+}
+
+double Quaternion::k() const
+{
+	if ( elements_.find(qk) == elements_.end() ) {
+		return 0.0;
+	} else {
+		return elements_.at(qk);
+	}
+}
 // ==== Begin non-member operator overloading ===
-// shared_ptr versions
-// - QuaternionPtr addition
-/* Note: Here we pass const shared_ptr objects. This means that the 
- *       pointer is const! Be very careful, as the objects can technically
- *       be modified!
- */
-QuaternionPtr Quaternions::operator+(const QuaternionPtr q1, const QuaternionPtr q2)
-{
-	QuaternionPtr q = (QuaternionPtr) new Quaternion(
-			q1->getAxisValue(qw)+q2->getAxisValue(qw),
-			q1->getAxisValue(qi)+q2->getAxisValue(qi),
-			q1->getAxisValue(qj)+q2->getAxisValue(qj),
-			q1->getAxisValue(qk)+q2->getAxisValue(qk) );
-	return q;
-}
-
-// - QuaternionPtr subtraction
-QuaternionPtr Quaternions::operator-(const QuaternionPtr q1, const QuaternionPtr q2)
-{
-	QuaternionPtr q = (QuaternionPtr) new Quaternion(
-			q1->getAxisValue(qw)-q2->getAxisValue(qw),
-			q1->getAxisValue(qi)-q2->getAxisValue(qi),
-			q1->getAxisValue(qj)-q2->getAxisValue(qj),
-			q1->getAxisValue(qk)-q2->getAxisValue(qk) );
-	return q;
-}
-
-// - Multiplications
-//   == Scalar multiplication
-QuaternionPtr Quaternions::operator*(const double c, const QuaternionPtr &q2) // double
-{
-	QuaternionPtr q = (QuaternionPtr) new Quaternion();
-	// This is a non-const lvalue reference so we have to use && 
-	// (note that we can't use const auto otherwise we can't increment the iterator)
-	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
-		q->operator[]((*it).first)=c*(*it).second;
-	}
-	return q;
-}
-
-QuaternionPtr Quaternions::operator*(const int c, const QuaternionPtr &q2) // int
-{
-	QuaternionPtr q = (QuaternionPtr) new Quaternion();
-	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
-		q->operator[]((*it).first)=(double)(c)*(*it).second; // Typecast int to double
-	}
-	return q;
-}
-
-QuaternionPtr Quaternions::operator*(const QuaternionPtr &q2, const double c) // double
-{
-	QuaternionPtr q = (QuaternionPtr) new Quaternion();
-	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
-		q->operator[]((*it).first)=c*(*it).second;
-	}
-	return q;
-}
-
-QuaternionPtr Quaternions::operator*(const QuaternionPtr &q2, const int c) // int
-{
-	QuaternionPtr q = (QuaternionPtr) new Quaternion();
-	for (auto &&it=q2->elementsBegin();it!=q2->elementsEnd();++it){ // FIXME: Help compiler unroll this loop
-		q->operator[]((*it).first)=(double)(c)*(*it).second; // Typecast int to double
-	}
-	return q;
-}
-
-//   == Quaternion multiplication
-QuaternionPtr Quaternions::operator*(const QuaternionPtr &q1, const QuaternionPtr &q2) // TODO: See if I can speed this up
-{
-	QuaternionPtr q = (QuaternionPtr) new Quaternion();
-
-	// Real part
-	q->operator[](qw)=
-			 q1->w()*q2->w()
-			-q1->i()*q2->i()
-			-q1->j()*q2->j()
-			-q1->k()*q2->k();
-	// i
-	q->operator[](qi)=
-			 q1->w()*q2->i()
-			+q1->i()*q2->w()
-			+q1->j()*q2->k()
-			-q1->k()*q2->j();
-	// j
-	q->operator[](qj)=
-			 q1->w()*q2->j()
-			-q1->i()*q2->k()
-			+q1->j()*q2->w()
-			+q1->k()*q2->i();
-	// k
-	q->operator[](qk)=
-			 q1->w()*q2->k()
-			+q1->i()*q2->j()
-			-q1->j()*q2->i()
-			+q1->k()*q2->w();
-
-	return q;
-}
-
-// Object operator overloading
 // - Quaternion addition
-Quaternion Quaternions::operator+(Quaternion &q1, Quaternion &q2)
+Quaternion Quaternions::operator+(const Quaternion &q1, const Quaternion &q2)
 {
 	if (q1.isEmpty() && q2.isEmpty() ){
 		assert(!"Addition of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
 	}
 	Quaternion q = Quaternion(
-			q1.getAxisValue(qw)+q2.getAxisValue(qw),
-			q1.getAxisValue(qi)+q2.getAxisValue(qi),
-			q1.getAxisValue(qj)+q2.getAxisValue(qj),
-			q1.getAxisValue(qk)+q2.getAxisValue(qk) );
+			q1.w()+q2.w(),
+			q1.i()+q2.i(),
+			q1.j()+q2.j(),
+			q1.k()+q2.k() );
 
 	return q;
 }
+
+Quaternion Quaternions::operator+(const double c, const Quaternion &q2)
+{
+	if (q2.isEmpty() ){
+		assert(!"Addition of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
+	}
+	Quaternion q = Quaternion(
+			c+q2.w(),
+			c+q2.i(),
+			c+q2.j(),
+			c+q2.k() );
+
+	return q;
+}
+
+Quaternion Quaternions::operator+(const Quaternion &q2, const double c)
+{
+	if (q2.isEmpty() ){
+		assert(!"Addition of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
+	}
+	Quaternion q = Quaternion(
+			c+q2.w(),
+			c+q2.i(),
+			c+q2.j(),
+			c+q2.k() );
+
+	return q;
+}
+
 // Quaternion subtraction
-Quaternion Quaternions::operator-(Quaternion &q1, Quaternion &q2)
+Quaternion Quaternions::operator-(const Quaternion &q1, const Quaternion &q2)
 {
 	if (q1.isEmpty() && q2.isEmpty() ){
 		assert(!"Subtraction of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
 	}
 	Quaternion q = Quaternion(
-			q1.getAxisValue(qw)-q2.getAxisValue(qw),
-			q1.getAxisValue(qi)-q2.getAxisValue(qi),
-			q1.getAxisValue(qj)-q2.getAxisValue(qj),
-			q1.getAxisValue(qk)-q2.getAxisValue(qk) );
+			q1.w()-q2.w(),
+			q1.i()-q2.i(),
+			q1.j()-q2.j(),
+			q1.k()-q2.k() );
 
 	return q;
 }
+
+Quaternion Quaternions::operator-(const double c, const Quaternion &q2)
+{
+	if (q2.isEmpty() ){
+		assert(!"Subtraction of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
+	}
+	Quaternion q = Quaternion(
+			c-q2.w(),
+			c-q2.i(),
+			c-q2.j(),
+			c-q2.k() );
+
+	return q;
+}
+
+Quaternion Quaternions::operator-(const Quaternion &q2, const double c)
+{
+	if (q2.isEmpty() ){
+		assert(!"Subtraction of two uninitialized quaternions"); // FIXME: this doesn't properly detect the uninitialized map
+	}
+	Quaternion q = Quaternion(
+			q2.w()-c,
+			q2.i()-c,
+			q2.j()-c,
+			q2.k()-c );
+
+	return q;
+}
+
 // - Multiplication
 //   == Scalar multiplication
 Quaternion Quaternions::operator*(const double c, Quaternion &q2) // double
@@ -321,7 +314,7 @@ Quaternion Quaternions::operator*(Quaternion &q2, const int c) // int
 }
 
 // == Quaternion multiplication
-Quaternion Quaternions::operator*(Quaternion &q1, Quaternion &q2) // FIXME: See if I can speed this up
+Quaternion Quaternions::operator*(const Quaternion &q1, const Quaternion &q2) // FIXME: See if I can speed this up
 {
 	Quaternion q = Quaternion();
 	// Real part
@@ -346,6 +339,24 @@ Quaternion Quaternions::operator*(Quaternion &q1, Quaternion &q2) // FIXME: See 
 		+q1.k()*q2.w();
 //	cout<<"returning move operation"<<endl;
 	return q;
+}
+
+// Comparison operators
+bool Quaternions::operator==(const Quaternion &q1, const Quaternion &q2)
+{
+	bool isEqual=true; // Initialize in case q1.w is empty
+
+	isEqual = (q1.w()==q2.w());
+	if (isEqual){isEqual = (q1.i()==q2.i());}
+	if (isEqual){isEqual = (q1.j()==q2.j());}
+	if (isEqual){isEqual = (q1.k()==q2.k());}
+
+	return isEqual;
+}
+
+bool Quaternions::operator!=(const Quaternion &q1, const Quaternion &q2)
+{
+	return !(q1==q2);
 }
 // ======End non-member operator overloading======
 
