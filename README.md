@@ -29,7 +29,6 @@ The quaternion library can be built as either a shared or a static library. By d
 
 -- TODO
 * Implement fast rotation algorithms using OpenMP (the project is currently built with the -fopenmp flag)
-* Implement Unit testing using CPPUnit
 
 -- Licensing
 
