@@ -1,5 +1,5 @@
 # quaternion
-This is a demo library to enable Quaternion calculations in C++. It is by no means complete and is still a work in progress. This project's main goals are:
+This is a demo library to enable Quaternion calculations in C++. It is by no means complete and is still a work in progress. That being said, all basic arithmetic operations should work fine. This project's main goals are:
 
 * To demonstrate a simple way to build a project using CMAKE with commented and easy to read cmakefiles
 * To demonstrate implementation of C++11 move semantics
