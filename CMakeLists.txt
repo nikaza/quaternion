@@ -41,10 +41,11 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set (CMAKE_CXX_FLAGS "-O3 -std=c++14 -fopenmp ${CMAKE_CXX_FLAGS}")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")  
   message("-- Using CLang compiler")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.8")
-    message(FATAL_ERROR "Project requires clang>=3.8")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.7")
+    message(FATAL_ERROR "Project requires clang>=3.7")
   endif()
-  set (CMAKE_CXX_FLAGS "-O3 -std=c++14 -fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
+    #message(FATAL_ERROR "Project currently only builds with gcc due to cppunit not linking properly with CLang")
+  set (CMAKE_CXX_FLAGS "-stdlib=libstdc++ -O3 -std=c++14  -fopenmp=libiomp5 ${CMAKE_CXX_FLAGS}")
 endif ()
 
 # add the binary tree to the search path for include files
@@ -54,5 +55,6 @@ include_directories("${PROJECT_BINARY_DIR}")
 include_directories ("${PROJECT_SOURCE_DIR}/src")
 add_subdirectory (src/base)
 add_subdirectory (src/algorithms)
+add_subdirectory (src/testing)
 
 # End of file
